@@ -1,0 +1,611 @@
+# This file is part of the General Standards Digitizer Driver.
+# It is subject to the license terms in the LICENSE.txt file found in the
+# top-level directory of this distribution and at
+# https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. No part
+# of the General Standards Digitizer Driver, including this file, may be copied,
+# modified, propagated, or distributed except according to the terms
+# contained in the LICENSE.txt file.
+
+
+# Macros:
+#   PREFIX  - prefix of records (: is implied)
+#   PORT    - port name of the TRGeneralStandards instance
+#   REFRESH_STATES_SCAN - SCAN rate for refreshing device states
+
+# The desired sample clock. If set to "Custom Frequency",
+# the value in CUSTOM_SAMPLE_RATE applies.
+record(mbbo, "$(PREFIX):clock") {
+    field(ZRST, "Custom Frequency")
+    field(ONST, "External Trigger")
+    field(TWVL, "763")
+    field(TWST, "0.76 kHz")
+    field(THVL, "1200")
+    field(THST, "1.2 kHz")
+    field(FRVL, "1800")
+    field(FRST, "1.8 kHz")
+    field(FVVL, "2800")
+    field(FVST, "2.8 kHz")
+    field(SXVL, "4000")
+    field(SXST, "4 kHz")
+    field(SVVL, "6000")
+    field(SVST, "6 kHz")
+    field(EIVL, "10000")
+    field(EIST, "10 kHz")
+    field(NIVL, "15000")
+    field(NIST, "15 kHz")
+    field(TEVL, "24000")
+    field(TEST, "24 kHz")
+    field(ELVL, "36000")
+    field(ELST, "36 kHz")
+    field(TVVL, "55000")
+    field(TVST, "55 kHz")
+    field(TTVL, "85000")
+    field(TTST, "85 kHz")
+    field(FTVL, "130000")
+    field(FTST, "130 kHz")
+    field(FFVL, "200000")
+    field(FFST, "200 kHz")
+    field(VAL,  "8")
+    field(STAT, "NO_ALARM")
+    field(SEVR, "NO_ALARM")
+    field(FLNK, "$(PREFIX):_update_requestedSampleRate")
+}
+
+# This record should be set to the sample rate when "clock"
+# is set to "Custom Frequency".
+record(ao, "$(PREFIX):CUSTOM_SAMPLE_RATE") {
+    field(EGU,  "Hz")
+    field(PREC, "4")
+    field(VAL,  "10000")
+    field(STAT, "NO_ALARM")
+    field(SEVR, "NO_ALARM")
+    field(FLNK, "$(PREFIX):_customSampleRate_changed")
+}
+
+# Sample rate estimate when the external clock is being used,
+# for autocalibration and the time array. We will simply
+# forward any CUSTOM_SAMPLE_RATE to this parameter.
+record(ao, "$(PREFIX):_externalClockRate") {
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),0,0)EXTERNAL_CLOCK_RATE")
+}
+
+# When CUSTOM_SAMPLE_RATE is changed, update _externalClockRate
+# and _requestedSampleRate.
+record(fanout, "$(PREFIX):_customSampleRate_changed") {
+    field(SELM, "All")
+    field(LNK1, "$(PREFIX):_update_externalClockRate")
+    field(LNK2, "$(PREFIX):_update_requestedSampleRate")
+}
+record(calcout, "$(PREFIX):_update_externalClockRate") {
+    field(INPA, "$(PREFIX):CUSTOM_SAMPLE_RATE")
+    field(CALC, "A")
+    field(OUT,  "$(PREFIX):_externalClockRate PP")
+    field(PINI, "YES")
+}
+
+# Update _requestedSampleRate based on "clock" and CUSTOM_SAMPLE_RATE.
+record(calcout, "$(PREFIX):_update_requestedSampleRate") {
+    field(INPA, "$(PREFIX):clock")
+    field(INPB, "$(PREFIX):clock.RVAL")
+    field(INPC, "$(PREFIX):CUSTOM_SAMPLE_RATE")
+    field(CALC, "A==1?-1:MAX(0,A==0?C:B)")
+    field(OUT,  "$(PREFIX):_requestedSampleRate PP")
+    field(PINI, "YES")
+}
+
+# Burst trigger source (desired and effective).
+record(mbbo, "$(PREFIX):trigger") {
+    field(PINI, "YES")
+    field(VAL,  "0")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)DESIRED_BURST_TRIGGER_SOURCE")
+    field(ZRVL, "0")
+    field(ZRST, "extTrigger")
+    field(ONVL, "1")
+    field(ONST, "soft")
+}
+record(mbbi, "$(PREFIX):get_trigger") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_BURST_TRIGGER_SOURCE")
+    field(ZRVL, "0")
+    field(ZRST, "extTrigger")
+    field(ONVL, "1")
+    field(ONST, "soft")
+    field(TWVL, "2")
+    field(TWST, "N/A")
+}
+
+# Input mode (desired and effective).
+record(mbbo, "$(PREFIX):DESIRED_INPUT_MODE") {
+    field(PINI, "YES")
+    field(VAL,  "0")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)DESIRED_INPUT_MODE")
+    field(ZRVL, "0")
+    field(ZRST, "Single-ended")
+    field(ONVL, "1")
+    field(ONST, "Pseudo-Differential")
+    field(TWVL, "2")
+    field(TWST, "Full-Differential")
+    field(THVL, "3")
+    field(THST, "Zero Test Voltage")
+    field(FRVL, "4")
+    field(FRST, "Reference Voltage")
+}
+record(mbbi, "$(PREFIX):GET_ARMED_INPUT_MODE") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_INPUT_MODE")
+    field(ZRVL, "0")
+    field(ZRST, "Single-ended")
+    field(ONVL, "1")
+    field(ONST, "Pseudo-Differential")
+    field(TWVL, "2")
+    field(TWST, "Full-Differential")
+    field(THVL, "3")
+    field(THST, "Zero Test Voltage")
+    field(FRVL, "4")
+    field(FRST, "Reference Voltage")
+    field(FVVL, "5")
+    field(FVST, "N/A")
+}
+
+# Voltage range (desired and effective).
+record(mbbo, "$(PREFIX):DESIRED_VOLTAGE_RANGE") {
+    field(PINI, "YES")
+    field(VAL,  "4")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)DESIRED_VOLTAGE_RANGE")
+    field(ZRVL, "0")
+    field(ZRST, "+-2.5 V")
+    field(ONVL, "1")
+    field(ONST, "0-5 V")
+    field(TWVL, "2")
+    field(TWST, "+-5 V")
+    field(THVL, "3")
+    field(THST, "0-10 V")
+    field(FRVL, "4")
+    field(FRST, "+-10 V")
+}
+record(mbbi, "$(PREFIX):GET_ARMED_VOLTAGE_RANGE") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_VOLTAGE_RANGE")
+    field(ZRVL, "0")
+    field(ZRST, "+-2.5 V")
+    field(ONVL, "1")
+    field(ONST, "0-5 V")
+    field(TWVL, "2")
+    field(TWST, "+-5 V")
+    field(THVL, "3")
+    field(THST, "0-10 V")
+    field(FRVL, "4")
+    field(FRST, "+-10 V")
+    field(FVVL, "5")
+    field(FVST, "N/A")
+}
+
+# Channel active range (desired and effective).
+record(mbbo, "$(PREFIX):DESIRED_CHANNEL_ACTIVE_RANGE") {
+    field(PINI, "YES")
+    field(VAL,  "5")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)DESIRED_CHANNEL_ACTIVE_RANGE")
+    field(ZRVL, "0")
+    field(ZRST, "Single")
+    field(ONVL, "1")
+    field(ONST, "Channels 0-1")
+    field(TWVL, "2")
+    field(TWST, "Channels 0-3")
+    field(THVL, "3")
+    field(THST, "Channels 0-7")
+    field(FRVL, "4")
+    field(FRST, "Channels 0-15")
+    field(FVVL, "5")
+    field(FVST, "Channels 0-31")
+    field(SXVL, "6")
+    field(SXST, "Channels 0-63")
+    field(SVVL, "7")
+    field(SVST, "Channel Range")
+}
+record(mbbi, "$(PREFIX):GET_ARMED_CHANNEL_ACTIVE_RANGE") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_CHANNEL_ACTIVE_RANGE")
+    field(ZRVL, "0")
+    field(ZRST, "Single")
+    field(ONVL, "1")
+    field(ONST, "Channels 0-1")
+    field(TWVL, "2")
+    field(TWST, "Channels 0-3")
+    field(THVL, "3")
+    field(THST, "Channels 0-7")
+    field(FRVL, "4")
+    field(FRST, "Channels 0-15")
+    field(FVVL, "5")
+    field(FVST, "Channels 0-31")
+    field(SXVL, "6")
+    field(SXST, "Channels 0-63")
+    field(SVVL, "7")
+    field(SVST, "Channel Range")
+    field(EIVL, "8")
+    field(EIST, "N/A")
+}
+
+# First channel, for channelActiveRange="Channel Range" (desired and effective).
+record(longout, "$(PREFIX):DESIRED_CHANNEL_RANGE_FIRST") {
+    field(PINI, "YES")
+    field(VAL,  "0")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)DESIRED_CHANNEL_RANGE_FIRST")
+}
+record(ai, "$(PREFIX):GET_ARMED_CHANNEL_RANGE_FIRST") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_CHANNEL_RANGE_FIRST")
+}
+
+# Last channel, for channelActiveRange="Channel Range" (desired and effective).
+record(longout, "$(PREFIX):DESIRED_CHANNEL_RANGE_LAST") {
+    field(PINI, "YES")
+    field(VAL,  "1")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)DESIRED_CHANNEL_RANGE_LAST")
+}
+record(ai, "$(PREFIX):GET_ARMED_CHANNEL_RANGE_LAST") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_CHANNEL_RANGE_LAST")
+}
+
+# Single channel, for channelActiveRange="Single" (desired and effective).
+record(longout, "$(PREFIX):DESIRED_CHANNEL_SINGLE") {
+    field(PINI, "YES")
+    field(VAL,  "0")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)DESIRED_CHANNEL_SINGLE")
+}
+record(ai, "$(PREFIX):GET_ARMED_CHANNEL_SINGLE") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_CHANNEL_SINGLE")
+}
+
+# Rate generator A divisor value (desired and effective).
+# This is automatically calculated based on the clock settings.
+record(longin, "$(PREFIX):CALC_DIVISOR_A") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)DESIRED_RATE_A_DIVISION_VALUE")
+}
+record(ai, "$(PREFIX):GET_ARMED_CALC_DIVISOR_A") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_RATE_A_DIVISION_VALUE")
+}
+
+# Rate generator B divisor value (desired and effective).
+# This is automatically calculated based on the clock settings.
+record(longin, "$(PREFIX):CALC_DIVISOR_B") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)DESIRED_RATE_B_DIVISION_VALUE")
+}
+record(ai, "$(PREFIX):GET_ARMED_CALC_DIVISOR_B") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_RATE_B_DIVISION_VALUE")
+}
+
+# Burst start timestamp enabled (desired and effective).
+record(bo, "$(PREFIX):BURST_START_TIMESTAMP_ENABLED") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)DESIRED_READ_BURST_START_TS_EN")
+    field(PINI, "YES")
+    field(VAL,  "1")
+    field(ZNAM, "Off")
+    field(ONAM, "On")
+}
+record(mbbi, "$(PREFIX):GET_BURST_START_TIMESTAMP_ENABLED") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_READ_BURST_START_TS_EN")
+    field(ZRVL, "0")
+    field(ZRST, "Off")
+    field(ONVL, "1")
+    field(ONST, "On")
+    field(TWVL, "2")
+    field(TWST, "N/A")
+}
+
+# Demand Mode DMA enabled (desired and effective).
+record(bo, "$(PREFIX):IO_MODE_DMDMA_ENABLED") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)DESIRED_READ_DMDMA_ENABLED")
+    field(PINI, "YES")
+    field(VAL,  "0")
+    field(ZNAM, "Off")
+    field(ONAM, "On")
+}
+record(mbbi, "$(PREFIX):GET_IO_MODE_DMDMA_ENABLED") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_READ_DMDMA_ENABLED")
+    field(ZRVL, "0")
+    field(ZRST, "Off")
+    field(ONVL, "1")
+    field(ONST, "On")
+    field(TWVL, "2")
+    field(TWST, "N/A")
+}
+
+# Voltage offset.
+# Changes are effective for newly processed data.
+record(ao, "$(PREFIX):VOLTAGE_DATA_OFFSET") {
+    field(PINI, "YES")
+    field(VAL,  "0")
+    field(EGU,  "V")
+    field(PREC, "4")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),0,0)ZERO_VOLTAGE_OFFSET")
+}
+
+# Generate raw instead of voltage data.
+# Changes are effective for newly processed data.
+record(bo, "$(PREFIX):SET_RAW_DATA") {
+    field(PINI, "YES")
+    field(VAL,  "0")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)GET_RAW_DATA")
+    field(ZNAM, "Voltage Data")
+    field(ONAM, "Raw Data")
+}
+
+# Handle software triggers.
+# Note that the C++ code will ignore any software triggers
+# while acquisition is not live, so Software Trigger can
+# be used during configuration safely.
+# We ignore any writes that are not the value 1. This is because
+# EDM buttons like to write 0 when the button is released.
+record(bo, "$(PREFIX):softTrigger") {
+    field(ONAM, "softTrigger")
+    field(FLNK, "$(PREFIX):_handle_soft_trigger")
+}
+record(calcout, "$(PREFIX):_handle_soft_trigger") {
+    field(INPA, "$(PREFIX):softTrigger")
+    field(CALC, "A==1")
+    field(OOPT, "When Non-zero")
+    field(DOPT, "Use OCAL")
+    field(OCAL, "1")
+    field(OUT,  "$(PREFIX):_send_software_trigger PP")
+}
+record(bo, "$(PREFIX):_send_software_trigger") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)SEND_SW_TRIGGER")
+    field(ONAM, "Send trigger")
+}
+
+# Device information.
+record(longin, "$(PREFIX):GET_FIRMWARE_REVISION") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)FIRMWARE_REVISION")
+}
+record(longin, "$(PREFIX):GET_MAX_INPUT_CHANNELS") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)MAX_INPUT_CHANNELS")
+}
+record(longin, "$(PREFIX):GET_MASTER_CLOCK_FREQUENCY") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)MASTER_CLOCK_FREQUENCY")
+    field(EGU,  "Hz")
+}
+record(longin, "$(PREFIX):GET_MAX_SAMPLE_RATE") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)MAX_SAMPLE_RATE")
+    field(EGU,  "Hz")
+}
+record(longin, "$(PREFIX):GET_BUFFER_SIZE") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)BUFFER_SIZE")
+}
+record(mbbi, "$(PREFIX):GET_DEVICE_TYPE") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)DEVICE_TYPE")
+    field(ZRVL, "0")
+    field(ZRST, "Unknown")
+    field(ONVL, "1")
+    field(ONST, "16AI64SSA")
+    field(TWVL, "2")
+    field(TWST, "16AI64SSC")
+}
+record(longin, "$(PREFIX):GET_MIN_DIVISOR") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)MIN_DIVISOR")
+}
+record(longin, "$(PREFIX):GET_MAX_DIVISOR") {
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)MAX_DIVISOR")
+}
+
+# Device states.
+record(bi, "$(PREFIX):GET_BUFFER_OVERFLOW_STATUS") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)BUFFER_OVERFLOW_STATUS")
+    field(ZNAM, "No Overflow")
+    field(ONAM, "Overflow")
+}
+record(bi, "$(PREFIX):GET_BURST_STATUS") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)BURST_STATUS")
+    field(ZNAM, "Idle")
+    field(ONAM, "Active")
+}
+record(longin, "$(PREFIX):GET_BUFFER_SAMPLES") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)BUFFER_SAMPLES_NUMBER")
+}
+
+# Periodically request the driver to read them from hardware
+# then process those records to receive the updated values.
+record(ai, "$(PREFIX):_periodic_refresh_status_info") {
+    field(PINI, "1")
+    field(SCAN, "$(REFRESH_STATES_SCAN)")
+    field(FLNK, "$(PREFIX):REFRESH_ALL_STATUS_INFO")
+}
+record(fanout, "$(PREFIX):REFRESH_ALL_STATUS_INFO") {
+    field(SELM, "All")
+    field(LNK1, "$(PREFIX):_request_refresh_status_info")
+    field(LNK2, "$(PREFIX):GET_BUFFER_OVERFLOW_STATUS")
+    field(LNK3, "$(PREFIX):GET_BURST_STATUS")
+    field(LNK4, "$(PREFIX):GET_BUFFER_SAMPLES")
+}
+record(bo, "$(PREFIX):_request_refresh_status_info") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)REFRESH_STATUS_INFO")
+    field(ONAM, "Refresh")
+    field(OMSL, "closed_loop")
+    field(DOL,  "1")
+}
+
+# AUX line settings.
+
+record(mbbo, "$(PREFIX):SET_AUX_LINE_0_MODE") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)AUX_LINE_0_MODE")
+    field(ZRVL, "0")
+    field(ZRST, "Inactive")
+    field(ONVL, "1")
+    field(ONST, "Active Input")
+    field(TWVL, "2")
+    field(TWST, "Active Output")
+    field(FLNK, "$(PREFIX):GET_AUX_LINE_0_MODE")
+}
+record(mbbi, "$(PREFIX):GET_AUX_LINE_0_MODE") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)AUX_LINE_0_MODE")
+    field(ZRVL, "0")
+    field(ZRST, "Inactive")
+    field(ONVL, "1")
+    field(ONST, "Active Input")
+    field(TWVL, "2")
+    field(TWST, "Active Output")
+}
+
+record(mbbo, "$(PREFIX):SET_AUX_LINE_1_MODE") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)AUX_LINE_1_MODE")
+    field(ZRVL, "0")
+    field(ZRST, "Inactive")
+    field(ONVL, "1")
+    field(ONST, "Active Input")
+    field(TWVL, "2")
+    field(TWST, "Active Output")
+    field(FLNK, "$(PREFIX):GET_AUX_LINE_1_MODE")
+}
+record(mbbi, "$(PREFIX):GET_AUX_LINE_1_MODE") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)AUX_LINE_1_MODE")
+    field(ZRVL, "0")
+    field(ZRST, "Inactive")
+    field(ONVL, "1")
+    field(ONST, "Active Input")
+    field(TWVL, "2")
+    field(TWST, "Active Output")
+}
+
+record(mbbo, "$(PREFIX):SET_AUX_LINE_2_MODE") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)AUX_LINE_2_MODE")
+    field(ZRVL, "0")
+    field(ZRST, "Inactive")
+    field(ONVL, "1")
+    field(ONST, "Active Input")
+    field(TWVL, "2")
+    field(TWST, "Active Output")
+    field(FLNK, "$(PREFIX):GET_AUX_LINE_2_MODE")
+}
+record(mbbi, "$(PREFIX):GET_AUX_LINE_2_MODE") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)AUX_LINE_2_MODE")
+    field(ZRVL, "0")
+    field(ZRST, "Inactive")
+    field(ONVL, "1")
+    field(ONST, "Active Input")
+    field(TWVL, "2")
+    field(TWST, "Active Output")
+}
+
+record(mbbo, "$(PREFIX):SET_AUX_LINE_3_MODE") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)AUX_LINE_3_MODE")
+    field(ZRVL, "0")
+    field(ZRST, "Inactive")
+    field(ONVL, "1")
+    field(ONST, "Active Input")
+    field(TWVL, "2")
+    field(TWST, "Active Output")
+    field(FLNK, "$(PREFIX):GET_AUX_LINE_3_MODE")   
+}
+record(mbbi, "$(PREFIX):GET_AUX_LINE_3_MODE") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)AUX_LINE_3_MODE")
+    field(ZRVL, "0")
+    field(ZRST, "Inactive")
+    field(ONVL, "1")
+    field(ONST, "Active Input")
+    field(TWVL, "2")
+    field(TWST, "Active Output")
+}
+
+record(bo, "$(PREFIX):SET_AUX_INVERT_IN") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)AUX_INVERT_IN")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(FLNK, "$(PREFIX):GET_AUX_INVERT_IN")
+}
+record(bi, "$(PREFIX):GET_AUX_INVERT_IN") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)AUX_INVERT_IN")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+}
+
+record(bo, "$(PREFIX):SET_AUX_INVERT_OUT") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)AUX_INVERT_OUT")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(FLNK, "$(PREFIX):GET_AUX_INVERT_OUT")
+}
+record(bi, "$(PREFIX):GET_AUX_INVERT_OUT") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)AUX_INVERT_OUT")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+}
+
+record(bo, "$(PREFIX):SET_AUX_NOISE_SUPPRESSION") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0,0)AUX_NOISE_SUPPRESSION")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(FLNK, "$(PREFIX):GET_AUX_NOISE_SUPPRESSION")
+}
+record(bi, "$(PREFIX):GET_AUX_NOISE_SUPPRESSION") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)AUX_NOISE_SUPPRESSION")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+}
+

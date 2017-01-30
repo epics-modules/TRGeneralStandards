@@ -1,0 +1,183 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 94
+y 541
+w 600
+h 300
+font "utopia-bold-r-12.0"
+ctlFont "utopia-bold-r-12.0"
+btnFont "utopia-bold-r-12.0"
+fgColor index 6
+bgColor index 16
+textColor index 6
+ctlFgColor1 index 4
+ctlFgColor2 index 3
+ctlBgColor1 index 3
+ctlBgColor2 index 0
+topShadowColor index 2
+botShadowColor index 15
+title "Display Data Snapshot from Channel $(N)"
+showGrid
+snapToGrid
+gridSize 20
+pvType "EPICS"
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 20
+y 20
+w 200
+h 20
+font "utopia-bold-r-12.0"
+fgColor index 6
+bgColor index 3
+useDisplayBg
+value {
+  "General Standards Digitizer"
+}
+endObjectProperties
+
+# (X-Y Graph)
+object xyGraphClass
+beginObjectProperties
+major 4
+minor 8
+release 0
+# Geometry
+x 20
+y 60
+w 560
+h 220
+# Appearance
+border
+autoScaleBothDirections
+autoScaleUpdateMs 10
+autoScaleThreshPct 10
+graphTitle "$(PORT):CH$(N):DATA_SNAPSHOT"
+xLabel "Time [s]"
+yLabel "Voltage [V]"
+fgColor index 6
+bgColor index 0
+gridColor index 6
+font "utopia-bold-r-12.0"
+# Operating Modes
+nPts 2
+# X axis properties
+showXAxis
+xAxisStyle "time"
+xAxisSrc "AutoScale"
+xMax 1
+# Y axis properties
+showYAxis
+yAxisSrc "AutoScale"
+yMax 1
+yAxisPrecision 15
+# Y2 axis properties
+y2AxisSrc "AutoScale"
+y2Max 1
+# Trace Properties
+numTraces 1
+xPv {
+  0 "$(PORT):TIME_DATA"
+}
+yPv {
+  0 "$(PORT):CH$(N):DATA_SNAPSHOT"
+}
+nPv {
+  0 "$(PORT):_SET_READ_NUM_SAMPLES"
+}
+opMode {
+  0 "plot"
+}
+plotColor {
+  0 index 9
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 1460
+y 0
+w 0
+h 0
+lineColor index 6
+fillColor index 3
+numPoints 1
+xPoints {
+  0 1462
+}
+yPoints {
+  0 7
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 380
+y 20
+w 80
+h 20
+fgColor index 6
+bgColor index 3
+topShadowColor index 2
+botShadowColor index 15
+font "utopia-bold-r-12.0"
+noEdit
+buttonLabel "Faster"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "data_display.edl"
+}
+closeAction {
+  0 1
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "PORT=$(PORT),N=$(N)"
+}
+replaceSymbols {
+  0 1
+}
+closeDisplay {
+  0 1
+}
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 500
+y 20
+w 80
+h 20
+fgColor index 2
+bgColor index 1
+topShadowColor index 2
+botShadowColor index 15
+label "EXIT"
+font "utopia-bold-r-12.0"
+3d
+endObjectProperties
+

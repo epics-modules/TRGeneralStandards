@@ -31,9 +31,9 @@ def main():
     with open(os.path.join(dir_path, LOAD_CHANNELS_DB_FILE), 'w') as f:
         f.write("# Load records for each chanel.\n")
         for channel in channels:
-            f.write('dbLoadRecords("$(TRANSRECORDER_CORE)/db/TRChannel.db", "PREFIX=$(PREFIX):CH{0:}, CHANNELS_PORT=$(DEVICE_NAME)_channels, CHANNEL={0:}")\n'
+            f.write('dbLoadRecords("$(TR_CORE)/db/TRChannel.db", "PREFIX=$(PREFIX):CH{0:}, CHANNELS_PORT=$(DEVICE_NAME)_channels, CHANNEL={0:}")\n'
                     .format(channel))
-            f.write('dbLoadRecords("$(TRANSRECORDER_CORE)/db/TRChannelWaveforms.db", "PREFIX=$(PREFIX):CH{0:}, STDARRAYS_PORT=$(DEVICE_NAME)_ch{0:}_stdarrays, SIZE=$(WAVEFORM_SIZE), REFRESH_SNAPSHOT_SCAN=$(REFRESH_SNAPSHOT_SCAN)")\n'
+            f.write('dbLoadRecords("$(TR_CORE)/db/TRChannelWaveforms.db", "PREFIX=$(PREFIX):CH{0:}, STDARRAYS_PORT=$(DEVICE_NAME)_ch{0:}_stdarrays, SIZE=$(WAVEFORM_SIZE), REFRESH_SNAPSHOT_SCAN=$(REFRESH_SNAPSHOT_SCAN)")\n'
                     .format(channel))
 
 if __name__ == '__main__':

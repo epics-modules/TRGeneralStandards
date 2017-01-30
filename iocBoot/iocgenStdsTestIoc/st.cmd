@@ -63,15 +63,15 @@ genStdsInitDevice("$(DEVICE_NAME)", "$(GENSTDS_DEVICE)", "$(READ_THREAD_PRIORITY
 #NDAttrConfigure("$(DEVICE_NAME)_sample_rate_attr", 3, 1, "$(DEVICE_NAME)_channels", 0, 10, -1, 0, 16384)
 
 # Load main records.
-dbLoadRecords("$(TRANSRECORDER_CORE)/db/TRBase.db", "PREFIX=$(PREFIX), PORT=$(DEVICE_NAME), DEVICE_NAME=$(DEVICE_NAME), SIZE=$(WAVEFORM_SIZE), PRESAMPLES=#")
+dbLoadRecords("$(TR_CORE)/db/TRBase.db", "PREFIX=$(PREFIX), PORT=$(DEVICE_NAME), DEVICE_NAME=$(DEVICE_NAME), SIZE=$(WAVEFORM_SIZE), PRESAMPLES=#")
 dbLoadRecords("db/TRGeneralStandards.db", "PREFIX=$(PREFIX), PORT=$(DEVICE_NAME), REFRESH_STATES_SCAN=$(REFRESH_STATES_SCAN)")
-dbLoadRecords("$(TRANSRECORDER_CORE)/db/TRGenericRequest.db", "PREFIX=$(PREFIX), PORT=$(DEVICE_NAME), REQUEST=INITIALIZE")
+dbLoadRecords("$(TR_CORE)/db/TRGenericRequest.db", "PREFIX=$(PREFIX), PORT=$(DEVICE_NAME), REQUEST=INITIALIZE")
 
 # Load channel-specific records (generated using gen_channels.py).
 < iocBoot/iocgenStdsTestIoc/genStdsLoadChannelsDb.cmd
 
 # Uncomment to load records for NDAttrPlugin waveforms.
-#dbLoadRecords("$(TRANSRECORDER_CORE)/db/TRSampleRateAttrTest.db", "PREFIX=$(PREFIX), ATTR_PORT=$(DEVICE_NAME)_sample_rate_attr")
+#dbLoadRecords("$(TR_CORE)/db/TRSampleRateAttrTest.db", "PREFIX=$(PREFIX), ATTR_PORT=$(DEVICE_NAME)_sample_rate_attr")
 
 # Initialize IOC.
 cd ${TOP}/iocBoot/${IOC}

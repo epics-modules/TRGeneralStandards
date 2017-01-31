@@ -117,7 +117,7 @@ record(mbbi, "$(PREFIX):get_trigger") {
     field(TWST, "N/A")
 }
 
-# Input mode (desired and effective).
+# Input mode (desired, effective and readback).
 record(mbbo, "$(PREFIX):DESIRED_INPUT_MODE") {
     field(PINI, "YES")
     field(VAL,  "0")
@@ -151,8 +151,22 @@ record(mbbi, "$(PREFIX):GET_ARMED_INPUT_MODE") {
     field(FVVL, "5")
     field(FVST, "N/A")
 }
+record(mbbi, "$(PREFIX):INPUT_MODE_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)INPUT_MODE_READBACK")
+    field(ZRVL, "0")
+    field(ZRST, "Single-ended")
+    field(ONVL, "1")
+    field(ONST, "Pseudo-Differential")
+    field(TWVL, "2")
+    field(TWST, "Full-Differential")
+    field(THVL, "3")
+    field(THST, "Zero Test Voltage")
+    field(FRVL, "4")
+    field(FRST, "Reference Voltage")
+}
 
-# Voltage range (desired and effective).
+# Voltage range (desired, effective and readback).
 record(mbbo, "$(PREFIX):DESIRED_VOLTAGE_RANGE") {
     field(PINI, "YES")
     field(VAL,  "4")
@@ -186,8 +200,22 @@ record(mbbi, "$(PREFIX):GET_ARMED_VOLTAGE_RANGE") {
     field(FVVL, "5")
     field(FVST, "N/A")
 }
+record(mbbi, "$(PREFIX):VOLTAGE_RANGE_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)VOLTAGE_RANGE_READBACK")
+    field(ZRVL, "0")
+    field(ZRST, "+-2.5 V")
+    field(ONVL, "1")
+    field(ONST, "0-5 V")
+    field(TWVL, "2")
+    field(TWST, "+-5 V")
+    field(THVL, "3")
+    field(THST, "0-10 V")
+    field(FRVL, "4")
+    field(FRST, "+-10 V")
+}
 
-# Channel active range (desired and effective).
+# Channel active range (desired, effective and readback).
 record(mbbo, "$(PREFIX):DESIRED_CHANNEL_ACTIVE_RANGE") {
     field(PINI, "YES")
     field(VAL,  "5")
@@ -233,8 +261,28 @@ record(mbbi, "$(PREFIX):GET_ARMED_CHANNEL_ACTIVE_RANGE") {
     field(EIVL, "8")
     field(EIST, "N/A")
 }
+record(mbbi, "$(PREFIX):CHANNEL_ACTIVE_RANGE_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)CHANNEL_ACTIVE_RANGE_READBACK")
+    field(ZRVL, "0")
+    field(ZRST, "Single")
+    field(ONVL, "1")
+    field(ONST, "Channels 0-1")
+    field(TWVL, "2")
+    field(TWST, "Channels 0-3")
+    field(THVL, "3")
+    field(THST, "Channels 0-7")
+    field(FRVL, "4")
+    field(FRST, "Channels 0-15")
+    field(FVVL, "5")
+    field(FVST, "Channels 0-31")
+    field(SXVL, "6")
+    field(SXST, "Channels 0-63")
+    field(SVVL, "7")
+    field(SVST, "Channel Range")
+}
 
-# First channel, for channelActiveRange="Channel Range" (desired and effective).
+# First channel, for channelActiveRange="Channel Range" (desired, effective and readback).
 record(longout, "$(PREFIX):DESIRED_CHANNEL_RANGE_FIRST") {
     field(PINI, "YES")
     field(VAL,  "0")
@@ -246,8 +294,12 @@ record(ai, "$(PREFIX):GET_ARMED_CHANNEL_RANGE_FIRST") {
     field(DTYP, "asynFloat64")
     field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_CHANNEL_RANGE_FIRST")
 }
+record(longin, "$(PREFIX):CHANNEL_RANGE_FIRST_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)CHANNEL_RANGE_FIRST_READBACK")
+}
 
-# Last channel, for channelActiveRange="Channel Range" (desired and effective).
+# Last channel, for channelActiveRange="Channel Range" (desired, effective and readback).
 record(longout, "$(PREFIX):DESIRED_CHANNEL_RANGE_LAST") {
     field(PINI, "YES")
     field(VAL,  "1")
@@ -259,8 +311,12 @@ record(ai, "$(PREFIX):GET_ARMED_CHANNEL_RANGE_LAST") {
     field(DTYP, "asynFloat64")
     field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_CHANNEL_RANGE_LAST")
 }
+record(longin, "$(PREFIX):CHANNEL_RANGE_LAST_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)CHANNEL_RANGE_LAST_READBACK")
+}
 
-# Single channel, for channelActiveRange="Single" (desired and effective).
+# Single channel, for channelActiveRange="Single" (desired, effective and readback).
 record(longout, "$(PREFIX):DESIRED_CHANNEL_SINGLE") {
     field(PINI, "YES")
     field(VAL,  "0")
@@ -271,6 +327,10 @@ record(ai, "$(PREFIX):GET_ARMED_CHANNEL_SINGLE") {
     field(SCAN, "I/O Intr")
     field(DTYP, "asynFloat64")
     field(INP,  "@asyn($(PORT),0,0)EFFECTIVE_CHANNEL_SINGLE")
+}
+record(longin, "$(PREFIX):CHANNEL_SINGLE_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)CHANNEL_SINGLE_READBACK")
 }
 
 # Rate generator A divisor value (desired and effective).
@@ -318,6 +378,20 @@ record(mbbi, "$(PREFIX):GET_BURST_START_TIMESTAMP_ENABLED") {
     field(ONST, "On")
     field(TWVL, "2")
     field(TWST, "N/A")
+}
+
+# Sample clock source (readback)
+record(mbbi, "$(PREFIX):CLOCK_SOURCE_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),0,0)CLOCK_SOURCE_READBACK")
+    field(ZRVL, "0")
+    field(ZRST, "Rate-A")
+    field(ONVL, "1")
+    field(ONST, "Rate-B")
+    field(TWVL, "2")
+    field(TWST, "External Sync")
+    field(THVL, "3")
+    field(THST, "Software Trigger")
 }
 
 # Demand Mode DMA enabled (desired and effective).
@@ -607,5 +681,35 @@ record(bi, "$(PREFIX):GET_AUX_NOISE_SUPPRESSION") {
     field(INP,  "@asyn($(PORT),0,0)AUX_NOISE_SUPPRESSION")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
+}
+
+# This processes the hardware readbacks of configuration.
+record(bo, "$(PREFIX):REFRESH_READBACKS") {
+    field(ONAM, "Refresh")
+    field(FLNK, "$(PREFIX):_refresh_readbacks")
+}
+record(fanout, "$(PREFIX):_refresh_readbacks") {
+    field(SELM, "All")
+    field(LNK1, "$(PREFIX):INPUT_MODE_RBV")
+    field(LNK2, "$(PREFIX):VOLTAGE_RANGE_RBV")
+    field(LNK3, "$(PREFIX):CHANNEL_ACTIVE_RANGE_RBV")
+    field(LNK4, "$(PREFIX):CHANNEL_RANGE_FIRST_RBV")
+    field(LNK5, "$(PREFIX):CHANNEL_RANGE_LAST_RBV")
+    field(LNK6, "$(PREFIX):CHANNEL_SINGLE_RBV")
+    field(FLNK, "$(PREFIX):CLOCK_SOURCE_RBV")
+}
+
+# Update readbacks when the arm state changes.
+record(calc, "$(PREFIX):_refresh_readbacks_on_arm_change") {
+    field(INPA, "$(PREFIX):arm CPP")
+    field(FLNK, "$(PREFIX):REFRESH_READBACKS")
+}
+
+# Update readbacks when the Initialize action completes.
+record(calcout, "$(PREFIX):_refresh_readbacks_after_init") {
+    field(INPA, "$(PREFIX):INITIALIZE_STATUS CPP")
+    field(CALC, "A==2||A==3")
+    field(OOPT, "When Non-zero")
+    field(OUT,  "$(PREFIX):REFRESH_READBACKS PP")
 }
 

@@ -425,3 +425,85 @@ The driver also provides the diagnostic times:
         </td>
     </tr>
 </table>
+
+## Testing PVs
+
+This section lists PVs which are desired to facilitate testing.
+
+There are several PVs which read back configuration from the hardware.
+These are updated automatically whenever the arm state changes (`arm` PV) or the
+Initialize operation completes, and can also be updated manually by writing to
+the PV `REFRESH_READBACKS`.
+
+<table>
+    <tr>
+        <th>PV name, record type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td valign="top">`REFRESH_READBACKS` (bo)</td>
+        <td>
+            Write one or `Refresh` to refresh the readbacks listed in this section.
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">`INPUT_MODE_RBV` (mbbi)</td>
+        <td>
+            Readback of the input mode (see `DESIRED_INPUT_MODE`).
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">`VOLTAGE_RANGE_RBV` (mbbi)</td>
+        <td>
+            Readback of the voltage range (see `DESIRED_VOLTAGE_RANGE`).
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">`CHANNEL_ACTIVE_RANGE_RBV` (mbbi)</td>
+        <td>
+            Readback of the channel-active-range (see `DESIRED_CHANNEL_ACTIVE_RANGE`).
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">`CHANNEL_RANGE_FIRST_RBV` (longin)</td>
+        <td>
+            Readback of the first channel number (see `DESIRED_CHANNEL_RANGE_FIRST`).
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">`CHANNEL_RANGE_LAST_RBV` (longin)</td>
+        <td>
+            Readback of the last channel number (see `DESIRED_CHANNEL_RANGE_LAST`).
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">`CHANNEL_SINGLE_RBV` (longin)</td>
+        <td>
+            Readback of the single channel number (see `DESIRED_CHANNEL_SINGLE`).
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">`CLOCK_SOURCE_RBV` (mbbi)</td>
+        <td>
+            Readback of the sample clock source setting
+            (`Rate-A`, `Rate-B`, `External Sync`, `Software Trigger`).
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">`CALC_DIVISOR_A` (longin)</td>
+        <td>
+            Calculated divisor of rate generator A corresponding
+            to the desired clock configuration. Zero means this
+            rate generator would not be used.
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">`CALC_DIVISOR_B` (longin)</td>
+        <td>
+            Calculated divisor of rate generator B corresponding
+            to the desired clock configuration. Zero means this
+            rate generator would not be used.
+        </td>
+    </tr>
+</table>
+

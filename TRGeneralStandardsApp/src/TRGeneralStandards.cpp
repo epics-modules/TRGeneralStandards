@@ -109,38 +109,47 @@ TRGeneralStandards::TRGeneralStandards(
 
     // Read-only or write-only params
     // Not writing to the parameters has to be enforced in the epics code.
-    createParam("SEND_SW_TRIGGER",              asynParamInt32,     &m_reg_params[SEND_SW_TRIGGER]);            // w/o
-    createParam("REFRESH_STATUS_INFO",          asynParamInt32,     &m_reg_params[REFRESH_STATUS_INFO]);        // w/o
+    createParam("SEND_SW_TRIGGER",                  asynParamInt32,     &m_reg_params[SEND_SW_TRIGGER]);            // w/o
+    createParam("REFRESH_STATUS_INFO",              asynParamInt32,     &m_reg_params[REFRESH_STATUS_INFO]);        // w/o
     
     // Device information
-    createParam("FIRMWARE_REVISION",            asynParamInt32,     &m_reg_params[FIRMWARE_REVISION]);          // r/o
-    createParam("MAX_INPUT_CHANNELS",           asynParamInt32,     &m_reg_params[MAX_INPUT_CHANNELS]);         // r/o
-    createParam("MASTER_CLOCK_FREQUENCY",       asynParamInt32,     &m_reg_params[MASTER_CLOCK_FREQUENCY]);     // r/o
-    createParam("MAX_SAMPLE_RATE",              asynParamInt32,     &m_reg_params[MAX_SAMPLE_RATE]);            // r/o
-    createParam("BUFFER_SIZE",                  asynParamInt32,     &m_reg_params[BUFFER_SIZE]);                // r/o
-    createParam("DEVICE_TYPE",                  asynParamInt32,     &m_reg_params[DEVICE_TYPE]);                // r/o
-    createParam("MIN_DIVISOR",                  asynParamInt32,     &m_reg_params[MIN_DIVISOR]);                // r/o
-    createParam("MAX_DIVISOR",                  asynParamInt32,     &m_reg_params[MAX_DIVISOR]);                // r/o
+    createParam("FIRMWARE_REVISION",                asynParamInt32,     &m_reg_params[FIRMWARE_REVISION]);          // r/o
+    createParam("MAX_INPUT_CHANNELS",               asynParamInt32,     &m_reg_params[MAX_INPUT_CHANNELS]);         // r/o
+    createParam("MASTER_CLOCK_FREQUENCY",           asynParamInt32,     &m_reg_params[MASTER_CLOCK_FREQUENCY]);     // r/o
+    createParam("MAX_SAMPLE_RATE",                  asynParamInt32,     &m_reg_params[MAX_SAMPLE_RATE]);            // r/o
+    createParam("BUFFER_SIZE",                      asynParamInt32,     &m_reg_params[BUFFER_SIZE]);                // r/o
+    createParam("DEVICE_TYPE",                      asynParamInt32,     &m_reg_params[DEVICE_TYPE]);                // r/o
+    createParam("MIN_DIVISOR",                      asynParamInt32,     &m_reg_params[MIN_DIVISOR]);                // r/o
+    createParam("MAX_DIVISOR",                      asynParamInt32,     &m_reg_params[MAX_DIVISOR]);                // r/o
 
     // Device states
-    createParam("BUFFER_OVERFLOW_STATUS",       asynParamInt32,     &m_reg_params[BUFFER_OVERFLOW_STATUS]);     // r/o
-    createParam("BURST_STATUS",                 asynParamInt32,     &m_reg_params[BURST_STATUS]);               // r/o
-    createParam("BUFFER_SAMPLES_NUMBER",        asynParamInt32,     &m_reg_params[BUFFER_SAMPLES_NUMBER]);      // r/o
+    createParam("BUFFER_OVERFLOW_STATUS",           asynParamInt32,     &m_reg_params[BUFFER_OVERFLOW_STATUS]);     // r/o
+    createParam("BURST_STATUS",                     asynParamInt32,     &m_reg_params[BURST_STATUS]);               // r/o
+    createParam("BUFFER_SAMPLES_NUMBER",            asynParamInt32,     &m_reg_params[BUFFER_SAMPLES_NUMBER]);      // r/o
 
     // Parameters that may be sent directly to hardware at any time
-    createParam("AUX_LINE_0_MODE",              asynParamInt32,     &m_reg_params[AUX_LINE_0_MODE]);
-    createParam("AUX_LINE_1_MODE",              asynParamInt32,     &m_reg_params[AUX_LINE_1_MODE]);
-    createParam("AUX_LINE_2_MODE",              asynParamInt32,     &m_reg_params[AUX_LINE_2_MODE]);
-    createParam("AUX_LINE_3_MODE",              asynParamInt32,     &m_reg_params[AUX_LINE_3_MODE]);
-    createParam("AUX_INVERT_IN",                asynParamInt32,     &m_reg_params[AUX_INVERT_IN]);
-    createParam("AUX_INVERT_OUT",               asynParamInt32,     &m_reg_params[AUX_INVERT_OUT]);
-    createParam("AUX_NOISE_SUPPRESSION",        asynParamInt32,     &m_reg_params[AUX_NOISE_SUPPRESSION]);
-    createParam("ZERO_VOLTAGE_OFFSET",          asynParamFloat64,   &m_reg_params[ZERO_VOLTAGE_OFFSET]);
-    createParam("GET_RAW_DATA",                 asynParamInt32,     &m_reg_params[GET_RAW_DATA]);
+    createParam("AUX_LINE_0_MODE",                  asynParamInt32,     &m_reg_params[AUX_LINE_0_MODE]);
+    createParam("AUX_LINE_1_MODE",                  asynParamInt32,     &m_reg_params[AUX_LINE_1_MODE]);
+    createParam("AUX_LINE_2_MODE",                  asynParamInt32,     &m_reg_params[AUX_LINE_2_MODE]);
+    createParam("AUX_LINE_3_MODE",                  asynParamInt32,     &m_reg_params[AUX_LINE_3_MODE]);
+    createParam("AUX_INVERT_IN",                    asynParamInt32,     &m_reg_params[AUX_INVERT_IN]);
+    createParam("AUX_INVERT_OUT",                   asynParamInt32,     &m_reg_params[AUX_INVERT_OUT]);
+    createParam("AUX_NOISE_SUPPRESSION",            asynParamInt32,     &m_reg_params[AUX_NOISE_SUPPRESSION]);
+    createParam("ZERO_VOLTAGE_OFFSET",              asynParamFloat64,   &m_reg_params[ZERO_VOLTAGE_OFFSET]);
+    createParam("GET_RAW_DATA",                     asynParamInt32,     &m_reg_params[GET_RAW_DATA]);
+
+    // Readbacks
+    createParam("INPUT_MODE_READBACK",              asynParamInt32,     &m_reg_params[INPUT_MODE_READBACK]);
+    createParam("VOLTAGE_RANGE_READBACK",           asynParamInt32,     &m_reg_params[VOLTAGE_RANGE_READBACK]);
+    createParam("CHANNEL_ACTIVE_RANGE_READBACK",    asynParamInt32,     &m_reg_params[CHANNEL_ACTIVE_RANGE_READBACK]);
+    createParam("CHANNEL_RANGE_FIRST_READBACK",     asynParamInt32,     &m_reg_params[CHANNEL_RANGE_FIRST_READBACK]);
+    createParam("CHANNEL_RANGE_LAST_READBACK",      asynParamInt32,     &m_reg_params[CHANNEL_RANGE_LAST_READBACK]);
+    createParam("CHANNEL_SINGLE_READBACK",          asynParamInt32,     &m_reg_params[CHANNEL_SINGLE_READBACK]);
+    createParam("CLOCK_SOURCE_READBACK",            asynParamInt32,     &m_reg_params[CLOCK_SOURCE_READBACK]);
 
     // Other params
-    createParam("INITIALIZE",                   asynParamInt32,     &m_reg_params[INITIALIZE]);
-    createParam("EXTERNAL_CLOCK_RATE",          asynParamFloat64,   &m_reg_params[EXTERNAL_CLOCK_RATE]);
+    createParam("INITIALIZE",                       asynParamInt32,     &m_reg_params[INITIALIZE]);
+    createParam("EXTERNAL_CLOCK_RATE",              asynParamFloat64,   &m_reg_params[EXTERNAL_CLOCK_RATE]);
 
     // Initial parameter values.
     setIntegerParam(m_reg_params[INITIALIZE], HelperRequestFailed);
@@ -315,6 +324,27 @@ asynStatus TRGeneralStandards::readInt32(asynUser *pasynUser, int32_t *value)
     }
     else if (reason == m_reg_params[AUX_NOISE_SUPPRESSION]) {
         result = m_hal->GetAuxNoiseSuppression();
+    }
+    else if (reason == m_reg_params[INPUT_MODE_READBACK]) {
+        result = m_hal->GetInputMode();
+    }
+    else if (reason == m_reg_params[VOLTAGE_RANGE_READBACK]) {
+        result = m_hal->GetVoltageRange();
+    }
+    else if (reason == m_reg_params[CHANNEL_ACTIVE_RANGE_READBACK]) {
+        result = m_hal->GetChannelActiveRange();
+    }
+    else if (reason == m_reg_params[CHANNEL_RANGE_FIRST_READBACK]) {
+        result = m_hal->GetChannel(GenStdsHAL::ChTypeFirst);
+    }
+    else if (reason == m_reg_params[CHANNEL_RANGE_LAST_READBACK]) {
+        result = m_hal->GetChannel(GenStdsHAL::ChTypeLast);
+    }
+    else if (reason == m_reg_params[CHANNEL_SINGLE_READBACK]) {
+        result = m_hal->GetChannel(GenStdsHAL::ChTypeSingle);
+    }
+    else if (reason == m_reg_params[CLOCK_SOURCE_READBACK]) {
+        result = m_hal->GetSampleClockSource();
     }
     else {
         // Simple parameter, delegate to asynPortDriver.
@@ -830,7 +860,7 @@ bool TRGeneralStandards::checkSampleSizeSettings()
         return false;
     }
     if (samplesPerBurst > (m_hw.buffer_size - 1) / m_bp.all_channels) {
-        errlogSevPrintf(errlogMajor, "genstds checkSampleSizeSettings error: Burst size * number of channels to big to fit in buffer.");
+        errlogSevPrintf(errlogMajor, "genstds checkSampleSizeSettings error: Burst size * number of channels too big to fit in buffer.");
         return false;
     }
 

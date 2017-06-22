@@ -33,7 +33,7 @@ def main():
         for channel in channels:
             f.write('dbLoadRecords("$(TR_CORE)/db/TRChannel.db", "PREFIX=$(PREFIX):CH{0:}, CHANNELS_PORT=$(DEVICE_NAME)_channels, CHANNEL={0:}")\n'
                     .format(channel))
-            f.write('dbLoadRecords("$(TR_CORE)/db/TRChannelWaveforms.db", "PREFIX=$(PREFIX):CH{0:}, STDARRAYS_PORT=$(DEVICE_NAME)_ch{0:}_stdarrays, SIZE=$(WAVEFORM_SIZE), REFRESH_SNAPSHOT_SCAN=$(REFRESH_SNAPSHOT_SCAN)")\n'
+            f.write('dbLoadRecords("$(TR_CORE)/db/TRChannelData.db", "PREFIX=$(PREFIX):CH{0:}, STDAR_PORT=$(DEVICE_NAME)_ch{0:}_stdarrays, SIZE=$(WAVEFORM_SIZE), SNAP_SCAN=$(SNAP_SCAN)")\n'
                     .format(channel))
 
 if __name__ == '__main__':

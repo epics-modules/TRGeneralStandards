@@ -5,6 +5,9 @@ include $(TOP)/configure/CONFIG
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
 #=============================
 
+# Build only for Linux (check OS part of T_A, e.g. linux in linux-x86_64).
+ifeq ($(firstword $(subst -, ,$(T_A))),linux)
+
 USR_INCLUDES += -I$(GENSTDS_DRIVER)
 
 #==================================================
@@ -30,7 +33,7 @@ DBD += genStdsTestIoc.dbd
 genStdsTestIoc_DBD += base.dbd
 
 # Include dbd files from all support applications:
-genStdsTestIoc_DBD += asyn.dbd ADSupport.dbd NDPluginStdArrays.dbd NDPluginAttribute.dbd trGenStds.dbd
+genStdsTestIoc_DBD += asyn.dbd ADSupport.dbd NDPluginSupport.dbd trGenStds.dbd
 
 # Add all the support libraries needed by this IOC
 genStdsTestIoc_LIBS += trGenStds trCore NDPlugin ADBase asyn
@@ -49,6 +52,9 @@ genStdsTestIoc_SRCS_vxWorks += -nil-
 genStdsTestIoc_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 #===========================
+
+# End confitional build.
+endif
 
 include $(TOP)/configure/RULES
 #----------------------------------------

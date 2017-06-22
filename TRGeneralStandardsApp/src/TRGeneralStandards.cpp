@@ -372,7 +372,7 @@ asynStatus TRGeneralStandards::readInt32(asynUser *pasynUser, int32_t *value)
 
 asynStatus TRGeneralStandards::handleInitializeRequest()
 {
-    if (isDisarmed()) {
+    if (!isArmed()) {
         if (!m_init_req_running) {
             m_init_req_running = true;
             setIntegerParam(m_reg_params[INITIALIZE], HelperRequestRunning);
